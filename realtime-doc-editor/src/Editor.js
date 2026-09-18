@@ -52,7 +52,6 @@ const Editor = () => {
   const [linkCopied, setLinkCopied] = useState(false);
   const [wordCount, setWordCount] = useState(0);
   const [charCount, setCharCount] = useState(0);
-  const [readOnly, setReadOnly] = useState(false);
   const [exportDropdownOpen, setExportDropdownOpen] = useState(false);
   const lastSentDelta = useRef(null);
 
@@ -264,6 +263,7 @@ const Editor = () => {
         quillRef.current = null;
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [docId, user, userLoading, navigate]);
 
   const shareableLink = `${window.location.origin}/doc/${docId}`;
