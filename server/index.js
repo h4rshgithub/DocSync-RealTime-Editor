@@ -2,27 +2,31 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const http = require('http').Server(app);
+const cors = require('cors');
+
+// Permissive CORS to handle Vercel deployment domains, previews & local dev
+app.use(cors({ origin: true, credentials: true }));
+app.use(express.json());
+
 const io = require('socket.io')(http, {
   cors: {
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
-    methods: ["GET", "POST"]
-  }
+    origin: '*',
+    methods: ['GET', 'POST'],
+  },
+  transports: ['polling', 'websocket'],
 });
 const admin = require('firebase-admin');
 const debounce = require('lodash/debounce');
 const helmet = require('helmet');
 const fs = require('fs');
-const cors = require('cors');
 const nodemailer = require('nodemailer');
 
 // Firebase Admin SDK initialize
 try {
   let credential;
   if (process.env.FIREBASE_ADMIN_SDK_JSON) {
-    // Production: full JSON string stored in env var
     credential = admin.credential.cert(JSON.parse(process.env.FIREBASE_ADMIN_SDK_JSON));
   } else if (process.env.FIREBASE_ADMIN_SDK_PATH) {
-    // Development: path to the service account JSON file
     const serviceAccount = JSON.parse(fs.readFileSync(process.env.FIREBASE_ADMIN_SDK_PATH, 'utf8'));
     credential = admin.credential.cert(serviceAccount);
   } else {
@@ -53,8 +57,6 @@ if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
 }
 
 app.use(helmet({ contentSecurityPolicy: false }));
-app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:3000' }));
-app.use(express.json());
 
 // Health check endpoint
 app.get('/health', (req, res) => {

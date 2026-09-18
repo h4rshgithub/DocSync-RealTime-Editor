@@ -23,13 +23,15 @@ const TOOLBAR_OPTIONS = [
   ['clean'],
 ];
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+const rawBackendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+const BACKEND_URL = rawBackendUrl.replace(/\/$/, '');
 
 const socket = io(BACKEND_URL, {
   reconnection: true,
-  reconnectionAttempts: 5,
+  reconnectionAttempts: 10,
   reconnectionDelay: 1000,
-  transports: ['websocket'],
+  transports: ['polling', 'websocket'],
+  withCredentials: true,
 });
 
 const Editor = () => {
