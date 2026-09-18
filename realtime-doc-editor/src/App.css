@@ -1,0 +1,171 @@
+/* DocSync Neon Dark Cyberpunk Theme */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --neon-purple: #a855f7;
+  --neon-cyan: #06b6d4;
+  --neon-pink: #ec4899;
+  --neon-green: #10b981;
+  --bg-dark: #090d16;
+  --bg-card: #131b2e;
+  --bg-input: #1a243d;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--bg-dark);
+  color: #f1f5f9;
+}
+
+/* Neon Glow Editor Container */
+.doc-editor-container {
+  background: #0f172a;
+  border-radius: 20px;
+  box-shadow: 0 0 30px -5px rgba(168, 85, 247, 0.15), 0 0 15px -3px rgba(6, 182, 212, 0.15);
+  border: 1px solid rgba(168, 85, 247, 0.25);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.doc-editor-container:hover {
+  border-color: rgba(168, 85, 247, 0.45);
+  box-shadow: 0 0 40px -5px rgba(168, 85, 247, 0.25), 0 0 20px -3px rgba(6, 182, 212, 0.25);
+}
+
+/* Toolbar Styling */
+.doc-editor-container .ql-toolbar.ql-snow {
+  border: none;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  padding: 14px 20px;
+  background: #1e293b;
+  flex-wrap: wrap;
+  display: flex;
+  gap: 6px;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.doc-editor-container .ql-toolbar.ql-snow button {
+  border-radius: 8px;
+  color: #94a3b8;
+  transition: all 0.2s ease;
+}
+
+.doc-editor-container .ql-toolbar.ql-snow button:hover {
+  background: rgba(168, 85, 247, 0.15);
+  color: #c084fc;
+}
+
+.doc-editor-container .ql-toolbar.ql-snow button.ql-active {
+  background: rgba(168, 85, 247, 0.25);
+  color: #c084fc;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
+}
+
+.doc-editor-container .ql-stroke {
+  stroke: #94a3b8 !important;
+}
+
+.doc-editor-container .ql-toolbar.ql-snow button:hover .ql-stroke,
+.doc-editor-container .ql-toolbar.ql-snow button.ql-active .ql-stroke {
+  stroke: #c084fc !important;
+}
+
+.doc-editor-container .ql-fill {
+  fill: #94a3b8 !important;
+}
+
+.doc-editor-container .ql-toolbar.ql-snow button:hover .ql-fill,
+.doc-editor-container .ql-toolbar.ql-snow button.ql-active .ql-fill {
+  fill: #c084fc !important;
+}
+
+.doc-editor-container .ql-picker {
+  color: #94a3b8 !important;
+}
+
+.doc-editor-container .ql-picker-options {
+  background-color: #1e293b !important;
+  border: 1px solid rgba(168, 85, 247, 0.3) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Editor Canvas */
+.doc-editor-container .ql-container.ql-snow {
+  border: none;
+  font-size: 16px;
+}
+
+.doc-editor-container .ql-editor {
+  min-height: calc(100vh - 240px);
+  padding: 48px 56px;
+  line-height: 1.85;
+  color: #f1f5f9;
+}
+
+.doc-editor-container .ql-editor.ql-blank::before {
+  color: #475569;
+  font-style: normal;
+  font-size: 16px;
+}
+
+.doc-editor-container .ql-editor h1 { font-size: 2.4em; font-weight: 800; margin-bottom: 0.6em; color: #ffffff; letter-spacing: -0.02em; }
+.doc-editor-container .ql-editor h2 { font-size: 1.85em; font-weight: 700; margin-bottom: 0.5em; color: #f8fafc; }
+.doc-editor-container .ql-editor h3 { font-size: 1.4em; font-weight: 600; margin-bottom: 0.4em; color: #e2e8f0; }
+
+.doc-editor-container .ql-editor img {
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+  max-width: 100%;
+}
+
+/* Glow Utilities */
+.neon-glow-purple {
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+}
+
+.neon-glow-cyan {
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+}
+
+.neon-glow-pink {
+  box-shadow: 0 0 20px rgba(236, 72, 153, 0.4);
+}
+
+.neon-border {
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.neon-border:focus {
+  border-color: #a855f7;
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.35);
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.02); }
+}
+
+.animate-pulseGlow {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+@keyframes slideLeft {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.animate-slideLeft {
+  animation: slideLeft 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease forwards;
+}
