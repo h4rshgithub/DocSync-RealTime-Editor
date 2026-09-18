@@ -1,0 +1,10 @@
+{
+  "buildCommand": "cd realtime-doc-editor && npm run build",
+  "outputDirectory": "realtime-doc-editor/build",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
