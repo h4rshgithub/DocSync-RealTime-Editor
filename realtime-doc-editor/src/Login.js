@@ -22,7 +22,7 @@ const Login = () => {
   };
 
   const getErrorMessage = (err) => {
-    const code = err.code;
+    const code = typeof err === 'string' ? err : err?.code;
     const messages = {
       'auth/invalid-email': 'Please enter a valid email address',
       'auth/user-not-found': 'No account found with this email',
@@ -33,8 +33,9 @@ const Login = () => {
       'auth/invalid-credential': 'Invalid login credentials. Please check your email and password.',
       'auth/operation-not-allowed': 'Email/Password login is disabled in Firebase Console. Go to Firebase > Authentication > Sign-in method and enable Email/Password.',
       'auth/api-key-service-blocked': 'Firebase API Key error. Please check your Vercel Environment Variables.',
+      'auth/unauthorized-domain': 'This domain is not authorized in Firebase Console. Add your Vercel domain under Firebase Console > Authentication > Settings > Authorized domains.',
     };
-    return messages[code] || err.message || 'Authentication failed. Please check your details and try again.';
+    return messages[code] || err?.message || (typeof err === 'string' ? err : 'Authentication failed. Please check your details and try again.');
   };
 
   const handleSubmit = async (e) => {
@@ -93,7 +94,7 @@ const Login = () => {
       await signInWithPopup(auth, new GoogleAuthProvider());
       navigate('/');
     } catch (err) {
-      setError(getErrorMessage(err.code));
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
