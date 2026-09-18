@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd realtime-doc-editor && npm run build",
+  "buildCommand": "cd realtime-doc-editor && npm install && npm run build",
   "outputDirectory": "realtime-doc-editor/build",
   "rewrites": [
     {
