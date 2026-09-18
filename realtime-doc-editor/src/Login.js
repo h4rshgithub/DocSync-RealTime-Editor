@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendEmailVerification } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendEmailVerification, signOut } from 'firebase/auth';
 import { auth } from './firebase';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,6 +10,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const [infoMessage, setInfoMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [resendUser, setResendUser] = useState(null);
   const navigate = useNavigate();
 
   const validate = () => {
@@ -37,21 +38,26 @@ const Login = () => {
     if (e) e.preventDefault();
     setError('');
     setInfoMessage('');
+    setResendUser(null);
     if (!validate()) return;
     setLoading(true);
     try {
       if (isRegister) {
         const userCred = await createUserWithEmailAndPassword(auth, email.trim(), password);
-        try {
-          await sendEmailVerification(userCred.user);
-          setInfoMessage('Account created! A verification email has been sent to your inbox.');
-        } catch (vErr) {
-          console.log('Verification email notice:', vErr.message);
-        }
+        await sendEmailVerification(userCred.user);
+        await signOut(auth);
+        setInfoMessage(`✓ Account created for ${email.trim()}! We've sent a verification email. Please verify your email before logging in.`);
+        setIsRegister(false);
       } else {
-        await signInWithEmailAndPassword(auth, email.trim(), password);
+        const userCred = await signInWithEmailAndPassword(auth, email.trim(), password);
+        if (!userCred.user.emailVerified) {
+          setResendUser(userCred.user);
+          await signOut(auth);
+          setError('Email not verified. Please check your inbox and click the verification link before logging in.');
+          return;
+        }
+        navigate('/');
       }
-      setTimeout(() => navigate('/'), 1200);
     } catch (err) {
       setError(getErrorMessage(err.code));
     } finally {
@@ -59,8 +65,20 @@ const Login = () => {
     }
   };
 
+  const handleResendVerification = async () => {
+    if (!resendUser) return;
+    try {
+      await sendEmailVerification(resendUser);
+      setInfoMessage('Verification email resent! Check your inbox.');
+      setError('');
+    } catch (err) {
+      setError('Could not resend email: ' + err.message);
+    }
+  };
+
   const signInWithGoogle = async () => {
     setError('');
+    setInfoMessage('');
     setLoading(true);
     try {
       await signInWithPopup(auth, new GoogleAuthProvider());
@@ -126,7 +144,18 @@ const Login = () => {
               <svg className="w-5 h-5 shrink-0 text-rose-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd"/>
               </svg>
-              <span>{error}</span>
+              <div className="flex-1">
+                <span>{error}</span>
+                {resendUser && (
+                  <button
+                    type="button"
+                    onClick={handleResendVerification}
+                    className="block mt-2 underline font-bold text-cyan-400 hover:text-cyan-300"
+                  >
+                    Resend Verification Email
+                  </button>
+                )}
+              </div>
             </div>
           )}
 
