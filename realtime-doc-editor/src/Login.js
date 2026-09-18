@@ -21,7 +21,8 @@ const Login = () => {
     return true;
   };
 
-  const getErrorMessage = (code) => {
+  const getErrorMessage = (err) => {
+    const code = err.code;
     const messages = {
       'auth/invalid-email': 'Please enter a valid email address',
       'auth/user-not-found': 'No account found with this email',
@@ -30,8 +31,10 @@ const Login = () => {
       'auth/too-many-requests': 'Too many failed attempts. Please try again later',
       'auth/network-request-failed': 'Network error. Check your connection',
       'auth/invalid-credential': 'Invalid login credentials. Please check your email and password.',
+      'auth/operation-not-allowed': 'Email/Password login is disabled in Firebase Console. Go to Firebase > Authentication > Sign-in method and enable Email/Password.',
+      'auth/api-key-service-blocked': 'Firebase API Key error. Please check your Vercel Environment Variables.',
     };
-    return messages[code] || 'Authentication failed. Please check your details and try again.';
+    return messages[code] || err.message || 'Authentication failed. Please check your details and try again.';
   };
 
   const handleSubmit = async (e) => {
@@ -44,22 +47,28 @@ const Login = () => {
     try {
       if (isRegister) {
         const userCred = await createUserWithEmailAndPassword(auth, email.trim(), password);
-        await sendEmailVerification(userCred.user);
+        try {
+          await sendEmailVerification(userCred.user);
+        } catch (vErr) {
+          console.warn('Verification email send notice:', vErr.message);
+        }
         await signOut(auth);
-        setInfoMessage(`✓ Account created for ${email.trim()}! We've sent a verification email. Please verify your email before logging in.`);
+        setInfoMessage(`✓ Account created for ${email.trim()}! Please check your email inbox to verify your account before logging in.`);
         setIsRegister(false);
       } else {
         const userCred = await signInWithEmailAndPassword(auth, email.trim(), password);
+        // Optional verification check fallback
         if (!userCred.user.emailVerified) {
           setResendUser(userCred.user);
           await signOut(auth);
-          setError('Email not verified. Please check your inbox and click the verification link before logging in.');
+          setError('Email not verified yet. Please check your inbox or click "Resend Verification Email" below.');
           return;
         }
         navigate('/');
       }
     } catch (err) {
-      setError(getErrorMessage(err.code));
+      console.error('Auth Error Details:', err.code, err.message);
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
